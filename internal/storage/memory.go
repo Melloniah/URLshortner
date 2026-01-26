@@ -13,13 +13,13 @@ type MemoryStore struct{
 	links map[string]model.Link
 }
 
-// returns a usable store, creates map and avoid some runtime panics
+// creates a new empty storage
 func NewMemoryStore () *MemoryStore{ 
 	return &MemoryStore{
 		links:make(map[string]model.Link)	}
 }
 
-// Implemets create, Lock() / Unlock() protect shared data, defer guarantees unlock, 
+// Saves a new link, returns error if short code already exists
 func (s *MemoryStore) Create(link model.Link) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -33,7 +33,7 @@ func (s *MemoryStore) Create(link model.Link) error {
 }
 
 //implement get, which returns zero value and error if its failling
-// mutexes help with concurrent access. 
+// mutexes help with concurrent access. Finds a link by its short code
  func (s *MemoryStore) Get(shortCode string) (model.Link, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
