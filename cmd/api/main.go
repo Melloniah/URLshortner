@@ -1,3 +1,4 @@
+
 package main
 
 import (
@@ -10,6 +11,7 @@ import (
 	"urlshortener/pkg/shortener"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -25,13 +27,24 @@ func main() {
 	router := mux.NewRouter()
 
 	// API routes
-	router.HandleFunc("/api/shorten", handler.CreateShortURL).Methods("POST")
-	router.HandleFunc("/api/stats/{shortCode}", handler.GetStats).Methods("GET")
+	router.HandleFunc("/api/shorten", handler.CreateShortURL).Methods("POST", "OPTIONS")
+	router.HandleFunc("/api/stats/{shortCode}", handler.GetStats).Methods("GET", "OPTIONS")
 
 	// Redirect route
 	router.HandleFunc("/{shortCode}", handler.RedirectURL).Methods("GET")
 
+	// Setup CORS with more permissive settings
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	})
+
 	// Start server
 	fmt.Println("Server starting on http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	fmt.Println("React frontend: http://localhost:3000")
+	log.Fatal(http.ListenAndServe(":8080", c.Handler(router)))
 }
