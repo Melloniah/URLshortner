@@ -1,4 +1,3 @@
-
 package main
 
 import (
@@ -33,6 +32,6 @@ func main() {
 	router.HandleFunc("/{shortCode}", handler.RedirectURL).Methods("GET")
 
 	// Start server
-	fmt.Println("🚀 Server starting on http://localhost:8080")
+	fmt.Println("Server starting on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
