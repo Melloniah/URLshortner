@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+// const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 
 function App() {
   const [url, setUrl] = useState('');
@@ -23,10 +23,17 @@ function App() {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API_URL}/api/shorten`, {
-        url: url
-      });
+      const response = await axios.post("/api/shorten", {
+url
+});
+    
 
+//     await axios.post("/api/shorten", {
+//   url
+// });
+
+
+      
       setShortUrl(response.data.short_url);
       setShortCode(response.data.short_code);
       setOriginalUrl(response.data.long_url);
@@ -50,7 +57,7 @@ function App() {
     
     setCheckingStats(true);
     try {
-      const response = await axios.get(`${API_URL}/api/stats/${shortCode}`);
+      const response = await axios.get(`/api/stats/${shortCode}`);
       setClicks(response.data.clicks);
       setCheckingStats(false);
     } catch (err) {
