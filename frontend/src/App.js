@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+
 function App() {
   const [url, setUrl] = useState('');
   const [shortUrl, setShortUrl] = useState('');
@@ -21,14 +23,14 @@ function App() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:8080/api/shorten', {
+      const response = await axios.post(`${API_URL}/api/shorten`, {
         url: url
       });
 
       setShortUrl(response.data.short_url);
       setShortCode(response.data.short_code);
       setOriginalUrl(response.data.long_url);
-      setClicks(0); // New URL starts with 0 clicks
+      setClicks(0);
       setCreatedAt(new Date().toLocaleString());
       setLoading(false);
     } catch (err) {
@@ -48,7 +50,7 @@ function App() {
     
     setCheckingStats(true);
     try {
-      const response = await axios.get(`http://localhost:8080/api/stats/${shortCode}`);
+      const response = await axios.get(`${API_URL}/api/stats/${shortCode}`);
       setClicks(response.data.clicks);
       setCheckingStats(false);
     } catch (err) {
@@ -60,10 +62,8 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Main Card */}
         <div className="bg-white rounded-3xl shadow-2xl p-8 transform transition-all duration-500 hover:scale-[1.02]">
           
-          {/* Header */}
           <div className="text-center mb-8">
             <div className="inline-block p-3 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-2xl mb-4">
               <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,7 +74,6 @@ function App() {
             <p className="text-gray-600">Shorten your URLs instantly</p>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="url" className="block text-sm font-semibold text-gray-700 mb-2">
@@ -114,14 +113,12 @@ function App() {
             </button>
           </form>
 
-          {/* Error Message */}
           {error && (
             <div className="mt-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg animate-shake">
               <p className="text-red-700 text-sm font-medium">❌ {error}</p>
             </div>
           )}
 
-          {/* Success Result */}
           {shortUrl && (
             <div className="mt-6 p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-200 animate-slideIn">
               <div className="flex items-center gap-2 mb-4">
@@ -131,7 +128,6 @@ function App() {
                 <p className="font-semibold text-green-800">Success! Your short URL:</p>
               </div>
 
-              {/* Short URL Display */}
               <div className="flex gap-2 mb-4">
                 <input
                   type="text"
@@ -156,7 +152,6 @@ function App() {
                 </button>
               </div>
 
-              {/* Click Counter */}
               <div className="mb-4 p-4 bg-white rounded-xl border-2 border-purple-200">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -186,7 +181,6 @@ function App() {
                 </div>
               </div>
 
-              {/* Stats */}
               <div className="space-y-3 pt-4 border-t border-green-200">
                 <div>
                   <p className="text-xs font-semibold text-gray-600 mb-1">Original URL:</p>
@@ -207,7 +201,6 @@ function App() {
           )}
         </div>
 
-        {/* Footer */}
         <div className="text-center mt-6">
           <p className="text-white text-sm opacity-90">
             Built with 💜 using Go & React
