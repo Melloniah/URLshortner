@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"urlshortener/internal/handlers"
 	"urlshortener/internal/storage"
@@ -18,7 +19,24 @@ func main() {
 	// Initialize storage and generator
 	store := storage.NewMemoryStore()
 	generator := shortener.NewGenerator()
-	baseURL := "http://localhost:8080"
+	
+	// Get base URL from environment or use default
+	baseURL := os.Getenv("BASE_URL")
+	if baseURL == "" {
+		baseURL = "http://localhost:8080"
+	}
+
+	// Get allowed origins from environment
+	allowedOrigin := os.Getenv("ALLOWED_ORIGIN")
+	if allowedOrigin == "" {
+		allowedOrigin = "http://localhost:3000"
+	}
+
+	// Get port from environment or use default
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
 
 	// Initialize handler
 	handler := handlers.NewURLHandler(store, generator, baseURL)
@@ -33,9 +51,9 @@ func main() {
 	// Redirect route
 	router.HandleFunc("/{shortCode}", handler.RedirectURL).Methods("GET")
 
-	// Setup CORS with more permissive settings
+	// Setup CORS
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedOrigins:   []string{allowedOrigin, "http://localhost:3000"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
@@ -44,7 +62,8 @@ func main() {
 	})
 
 	// Start server
-	fmt.Println("Server starting on http://localhost:8080")
-	fmt.Println("React frontend: http://localhost:3000")
-	log.Fatal(http.ListenAndServe(":8080", c.Handler(router)))
+	fmt.Printf("🚀 Server starting on port %s\n", port)
+	fmt.Printf("📱 Allowed origin: %s\n", allowedOrigin)
+	fmt.Printf("🔗 Base URL: %s\n", baseURL)
+	log.Fatal(http.ListenAndServe(":"+port, c.Handler(router)))
 }
