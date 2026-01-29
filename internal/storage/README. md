@@ -1,0 +1,263 @@
+cd ~/projects/URLShortener
+cat > README.md << 'EOF'
+# 🔗 GoLink - Professional URL Shortener
+
+A full-stack URL shortener application built with Go and React that allows you to create shortened links with click tracking and analytics.
+
+## Live Demo
+
+- **Frontend**: [https://url-shortener-khaki-five.vercel.app](https://url-shortener-khaki-five.vercel.app)
+- **Backend API**: [https://urlshortner-production-fbd3.up.railway.app](https://urlshortner-production-fbd3.up.railway.app)
+## Live Link to Video
+https://urlshortner-production-fbd3.up.railway.app/St8pvV OR https://drive.google.com/file/d/1H_YCjM7C0ybhNLeOoPQlS2g1cAXI-0Sx/view?usp=drive_link
+##  Features
+
+- **Shorten URLs** - Convert long URLs into short, shareable links
+- **Click Tracking** - Track how many times each short link has been clicked
+- **Lookup Stats** - Check statistics for existing short codes
+- **Persistent Storage** - Data survives server restarts via file-based storage
+-  **Modern UI** - Clean, responsive interface built with React and Tailwind CSS
+-  **Fast Redirects** - Instant redirection to original URLs
+- **Thread-Safe** - Handles concurrent requests safely with mutex locks
+
+##  Tech Stack
+
+### Backend
+- **Go 1.22+** - High-performance backend server
+- **Gorilla Mux** - HTTP router and URL matcher
+- **CORS** - Cross-Origin Resource Sharing support
+- **JSON Storage** - File-based persistence
+
+### Frontend
+- **React 18** - Modern UI library
+- **Axios** - HTTP client for API requests
+- **Tailwind CSS** - Utility-first CSS framework
+- **Create React App** - Build tooling
+
+### Deployment
+- **Railway** - Backend hosting
+- **Vercel** - Frontend hosting
+
+## Project Structure
+```
+URLShortener/
+├── cmd/
+│   └── api/
+│       └── main.go              # Application entry point
+├── internal/
+│   ├── handlers/
+│   │   └── url_handler.go       # HTTP request handlers
+│   ├── models/
+│   │   └── link.go              # Data structures
+│   └── storage/
+│       └── store.go             # In-memory + file storage
+├── pkg/
+│   └── shortener/
+│       └── generator.go         # Short code generator
+├── frontend/
+│   ├── src/
+│   │   ├── App.js               # Main React component
+│   │   └── index.css            # Tailwind styles
+│   └── public/
+├── links.json                   # Persisted URL data
+├── go.mod                       # Go dependencies
+└── README.md
+```
+
+## Getting Started
+
+### Prerequisites
+
+- Go 1.22 or higher
+- Node.js 18 or higher
+- npm or yarn
+
+### Backend Setup
+
+1. **Clone the repository**
+```bash
+   git clone https://github.com/Melloniah/URLshortner.git
+   cd URLshortner
+```
+
+2. **Install Go dependencies**
+```bash
+   go mod download
+```
+
+3. **Run the backend server**
+```bash
+   go run cmd/api/main.go
+```
+
+   The server will start on `http://localhost:8080`
+
+### Frontend Setup
+
+1. **Navigate to frontend directory**
+```bash
+   cd frontend
+```
+
+2. **Install dependencies**
+```bash
+   npm install
+```
+
+3. **Start the development server**
+```bash
+   npm start
+```
+
+   The app will open at `http://localhost:3000`
+
+## API Endpoints
+
+### Create Short URL
+```http
+POST /api/shorten
+Content-Type: application/json
+
+{
+  "url": "https://example.com/very-long-url"
+}
+```
+
+**Response:**
+```json
+{
+  "short_code": "aB3xYz",
+  "short_url": "http://localhost:8080/aB3xYz",
+  "long_url": "https://example.com/very-long-url"
+}
+```
+
+### Redirect to Original URL
+```http
+GET /{shortCode}
+```
+
+Redirects to the original URL and increments click counter.
+
+### Get URL Statistics
+```http
+GET /api/stats/{shortCode}
+```
+
+**Response:**
+```json
+{
+  "id": "uuid-here",
+  "original_url": "https://example.com/very-long-url",
+  "short_code": "aB3xYz",
+  "clicks": 42,
+  "created_at": "2026-01-29T12:00:00Z",
+  "last_accessed": "2026-01-29T15:30:00Z"
+}
+```
+
+## How It Works
+
+1. **URL Submission**: User submits a long URL through the React frontend
+2. **Code Generation**: Backend generates a unique 6-character code (62^6 = 56B possibilities)
+3. **Storage**: URL mapping is stored in memory and persisted to `links.json`
+4. **Redirection**: When someone visits the short URL, they're redirected to the original
+5. **Analytics**: Each visit increments the click counter and updates last accessed time
+
+##  Environment Variables
+
+### Backend (Railway)
+```env
+BASE_URL=https://urlshortner-production-fbd3.up.railway.app
+PORT=8080
+ALLOWED_ORIGIN=https://url-shortener-khaki-five.vercel.app
+```
+
+### Frontend (Vercel)
+```env
+REACT_APP_API_URL=https://urlshortner-production-fbd3.up.railway.app
+CI=false
+```
+
+## Deployment
+
+### Deploy Backend to Railway
+
+1. Push your code to GitHub
+2. Connect repository to Railway
+3. Set environment variables
+4. Deploy automatically
+
+### Deploy Frontend to Vercel
+
+1. Push your code to GitHub
+2. Import project to Vercel
+3. Set root directory to `frontend`
+4. Set environment variables
+5. Deploy
+
+## Testing
+
+### Test Backend Locally
+```bash
+# Create a short URL
+curl -X POST http://localhost:8080/api/shorten \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://www.google.com"}'
+
+# Get stats
+curl http://localhost:8080/api/stats/{shortCode}
+```
+
+### Test Frontend Locally
+1. Open `http://localhost:3000`
+2. Enter a long URL
+3. Click "Shorten URL"
+4. Copy and test the generated short link
+
+## Features in Detail
+
+### Click Tracking
+- Every time a short URL is accessed, the click counter increments
+- Last accessed timestamp is updated
+- Real-time stats refresh with the "Refresh Stats" button
+
+### Lookup Existing URLs
+- Enter any short code to view its statistics
+- See original URL, click count, and creation date
+- Useful for tracking links after closing the browser
+
+### Data Persistence
+- All URLs are saved to `links.json`
+- Data survives server restarts
+- Thread-safe concurrent access with mutex locks
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+##  License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+## Author
+
+**Mellon Obada**
+- GitHub: [@Melloniah](https://github.com/Melloniah)
+
+##  Acknowledgments
+
+- Built with [Go](https://golang.org/)
+- Frontend powered by [React](https://reactjs.org/)
+- Styled with [Tailwind CSS](https://tailwindcss.com/)
+- Deployed on [Railway](https://railway.app/) and [Vercel](https://vercel.com/)
+
+---
+
+**If you found this project helpful, please give it a star!**
