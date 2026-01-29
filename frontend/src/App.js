@@ -141,6 +141,11 @@ function App() {
                   </div>
                   <p className="text-[10px] text-emerald-600 font-medium uppercase italic">Updating live</p>
                 </div>
+                {/* Added these lines so originalUrl and createdAt are used! */}
+                <div className="pt-2 text-[10px] text-gray-500 space-y-1 overflow-hidden">
+                  <p className="truncate"><span className="font-bold uppercase">Original:</span> {originalUrl}</p>
+                  <p><span className="font-bold uppercase">Created:</span> {createdAt}</p>
+                </div>
               </div>
             </div>
           )}
