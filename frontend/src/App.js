@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const API_URL = "https://urlshortner-production-fbd3.up.railway.app";
@@ -13,7 +13,23 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
-  const [checkingStats, setCheckingStats] = useState(false);
+
+  // Live Update Logic - Every 3 seconds
+  useEffect(() => {
+    if (!shortCode) return;
+
+    const fetchStats = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/api/stats/${shortCode}`);
+        setClicks(response.data.clicks);
+      } catch (err) {
+        console.error('Failed to fetch stats');
+      }
+    };
+
+    const interval = setInterval(fetchStats, 3000);
+    return () => clearInterval(interval);
+  }, [shortCode]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,28 +56,6 @@ function App() {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-  <a
-  href={shortUrl}
-  target="_blank"
-  rel="noopener noreferrer"
-  className="text-xs font-bold text-emerald-700 hover:underline"
->
-  Open Short Link
-</a>
-
-
-  const refreshStats = async () => {
-    if (!shortCode) return;
-    setCheckingStats(true);
-    try {
-      const response = await axios.get(`${API_URL}/api/stats/${shortCode}`);
-      setClicks(response.data.clicks);
-      setCheckingStats(false);
-    } catch (err) {
-      console.error('Failed to fetch stats');
-      setCheckingStats(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-emerald-900 flex items-center justify-center p-4 font-sans">
@@ -73,7 +67,6 @@ function App() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
               </svg>
             </div>
-            {/* Updated App Name */}
             <h1 className="text-3xl font-bold text-emerald-900 mb-1">GoLink</h1>
             <p className="text-gray-500 text-sm uppercase tracking-wide">Professional URL Shortener that allows creating a shortened link,making it easy to share</p>
           </div>
@@ -128,28 +121,25 @@ function App() {
                   {copied ? 'Copied' : 'Copy'}
                 </button>
                 <a
-        href={shortUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="px-4 py-2 bg-emerald-100 text-emerald-700 text-sm font-bold rounded hover:bg-emerald-200 flex items-center"
-      >
-        Open
-      </a>
+                  href={shortUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-emerald-100 text-emerald-700 text-sm font-bold rounded hover:bg-emerald-200 flex items-center"
+                >
+                  Open
+                </a>
               </div>
 
               <div className="space-y-4 pt-4 border-t border-emerald-200">
                 <div className="flex justify-between items-center">
                   <div>
                     <p className="text-[10px] font-bold text-emerald-800 uppercase">Total Clicks</p>
-                    <p className="text-xl font-black text-emerald-900">{clicks}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-xl font-black text-emerald-900">{clicks}</p>
+                      <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    </div>
                   </div>
-                  <button
-                    onClick={refreshStats}
-                    disabled={checkingStats}
-                    className="text-xs font-bold text-emerald-700 hover:underline disabled:text-gray-400"
-                  >
-                    {checkingStats ? 'Updating...' : 'Refresh Stats'}
-                  </button>
+                  <p className="text-[10px] text-emerald-600 font-medium uppercase italic">Updating live</p>
                 </div>
               </div>
             </div>
