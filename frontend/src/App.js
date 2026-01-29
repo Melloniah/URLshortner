@@ -75,7 +75,7 @@ function App() {
             </div>
             {/* Updated App Name */}
             <h1 className="text-3xl font-bold text-emerald-900 mb-1">GoLink</h1>
-            <p className="text-gray-500 text-sm uppercase tracking-wide">Professional URL Shortener that allows creating a shortened link, making it easy to share</p>
+            <p className="text-gray-500 text-sm uppercase tracking-wide">Professional URL Shortener that allows creating a shortened link,making it easy to share</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -127,6 +127,14 @@ function App() {
                 >
                   {copied ? 'Copied' : 'Copy'}
                 </button>
+                <a
+        href={shortUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="px-4 py-2 bg-emerald-100 text-emerald-700 text-sm font-bold rounded hover:bg-emerald-200 flex items-center"
+      >
+        Open
+      </a>
               </div>
 
               <div className="space-y-4 pt-4 border-t border-emerald-200">
