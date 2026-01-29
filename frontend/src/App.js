@@ -40,6 +40,15 @@ function App() {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+  <a
+  href={shortUrl}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="text-xs font-bold text-emerald-700 hover:underline"
+>
+  Open Short Link
+</a>
+
 
   const refreshStats = async () => {
     if (!shortCode) return;
@@ -55,19 +64,18 @@ function App() {
   };
 
   return (
-    // Solid Deep Green Background
     <div className="min-h-screen bg-emerald-900 flex items-center justify-center p-4 font-sans">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="text-center mb-8">
-            {/* Solid Deep Green Icon Container */}
             <div className="inline-block p-3 bg-emerald-700 rounded-xl mb-4">
               <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
               </svg>
             </div>
+            {/* Updated App Name */}
             <h1 className="text-3xl font-bold text-emerald-900 mb-1">GoLink</h1>
-            <p className="text-gray-500 text-sm uppercase tracking-wide">URL Shortener Service</p>
+            <p className="text-gray-500 text-sm uppercase tracking-wide">Professional URL Shortener that allows creating a shortened link, making it easy to share</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -92,34 +100,19 @@ function App() {
               disabled={loading}
               className="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3 px-6 rounded-lg transition-colors disabled:opacity-70 flex items-center justify-center gap-2"
             >
-              {loading ? (
-                <>
-                  <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  <span>Processing...</span>
-                </>
-              ) : (
-                <span>Shorten URL</span>
-              )}
+              {loading ? <span>Processing...</span> : <span>Shorten URL</span>}
             </button>
           </form>
 
           {error && (
-            <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-700 text-sm text-center">{error}</p>
+            <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg text-center">
+              <p className="text-red-700 text-sm">{error}</p>
             </div>
           )}
 
           {shortUrl && (
             <div className="mt-6 p-6 bg-emerald-50 rounded-xl border border-emerald-200">
-              <div className="flex items-center gap-2 mb-4">
-                <svg className="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <p className="font-bold text-emerald-900 text-sm">Success! Your Short Link:</p>
-              </div>
+              <p className="font-bold text-emerald-900 text-sm mb-4 text-center">Short Link Ready</p>
 
               <div className="flex gap-2 mb-6">
                 <input
@@ -147,19 +140,8 @@ function App() {
                     disabled={checkingStats}
                     className="text-xs font-bold text-emerald-700 hover:underline disabled:text-gray-400"
                   >
-                    {checkingStats ? 'Updating...' : 'Update Stats'}
+                    {checkingStats ? 'Updating...' : 'Refresh Stats'}
                   </button>
-                </div>
-                
-                <div className="grid grid-cols-1 gap-2 text-xs">
-                  <div>
-                    <span className="font-bold text-emerald-800 uppercase block text-[10px]">Original</span>
-                    <p className="text-gray-600 truncate">{originalUrl}</p>
-                  </div>
-                  <div>
-                    <span className="font-bold text-emerald-800 uppercase block text-[10px]">Created At</span>
-                    <p className="text-gray-600">{createdAt}</p>
-                  </div>
                 </div>
               </div>
             </div>
