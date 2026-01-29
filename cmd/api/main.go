@@ -62,8 +62,8 @@ func main() {
 	})
 
 	// Start server
-	fmt.Printf("🚀 Server starting on port %s\n", port)
-	fmt.Printf("📱 Allowed origin: %s\n", allowedOrigin)
-	fmt.Printf("🔗 Base URL: %s\n", baseURL)
+	fmt.Printf("Server starting on port %s\n", port)
+	fmt.Printf("Allowed origin: %s\n", allowedOrigin)
+	fmt.Printf("Base URL: %s\n", baseURL)
 	log.Fatal(http.ListenAndServe(":"+port, c.Handler(router)))
 }
