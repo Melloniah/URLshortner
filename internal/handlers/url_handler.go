@@ -92,9 +92,10 @@ func (h *URLHandler) RedirectURL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// This increments the clicks in memory and saves to links.json
 	h.storage.IncrementClicks(shortCode)
 
-	http.Redirect(w, r, link.OriginalURL, http.StatusMovedPermanently)
+	http.Redirect(w, r, link.OriginalURL, http.StatusFound)
 }
 
 // GetStats handles GET /api/stats/{shortCode}
